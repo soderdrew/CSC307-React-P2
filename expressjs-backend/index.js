@@ -1,6 +1,10 @@
+const uuid = require('uuid')
 const express = require('express');
 const app = express();
 const port = 5000;
+const cors = require('cors');
+
+app.use(cors());
 
 app.use(express.json());
 
@@ -16,11 +20,11 @@ app.listen(port, () => {
 app.get('/users', (req, res) => {
    const name = req.query.name;
    const job = req.query.job;
-   console.log(name);
-   console.log(job);
+   //console.log(name);
+   //console.log(job);
    if (name != undefined){
       let result = findUserByName(name);
-      console.log(result)
+      //console.log(result)
       if (job != undefined){
          // pass in a list     
          let finalResult = findUserByJob(job, result);
@@ -51,8 +55,9 @@ app.get('/users/:id', (req, res) => {
 
 app.post('/users', (req, res) => {
    const userToAdd = req.body;
+   userToAdd.id = uuid.v4();   // generated unique id for user
    addUser(userToAdd);
-   res.status(200).end();
+   res.status(201).send(userToAdd);
 });
 
 app.delete('/users/:id', (req, res) => {
@@ -64,7 +69,7 @@ app.delete('/users/:id', (req, res) => {
    else {
        users.users_list.splice(users.users_list.indexOf(result), 1);
        //result = {users_list: result};
-       res.status(200).end();
+       res.status(204).end();
    }
 })
 
